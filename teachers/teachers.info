@@ -1,0 +1,5 @@
+name = "Teachers"
+description = "Displays and editing teachers"
+version = 7.x-1.x-dev
+core = 7.x
+files[] = teachers.test

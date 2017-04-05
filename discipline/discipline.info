@@ -1,0 +1,5 @@
+name = "Disciplines"
+description = "Displays and editing disciplines"
+version = 7.x-1.x-dev
+core = 7.x
+

@@ -1,0 +1,23 @@
+<?php
+
+// $Id$
+/**
+ * @file
+ * Модуль, реализующий личный кабинет
+ */
+
+/**
+ * Задание адреса
+ */
+function personal_menu()
+{
+  $items = array ();
+  $items ['personal'] = array ('title' => 'Личный кабинет', 
+  							'description' => 'Личный кабинет', 
+  							'page callback' => 'personal_page', 
+  							'access arguments' => array ('access content' ), 
+  							'type' => MENU_CALLBACK );
+  return $items;
+}
+
+include 'cabinet.php';

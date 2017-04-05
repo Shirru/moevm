@@ -1,0 +1,91 @@
+<?php
+
+// $Id$
+/**
+ * @file
+ * Модуль для управления препдавателями
+ */
+
+/**
+ * Модуль для работы с преподавателями
+ */
+function teachers_menu()
+{
+    $items = array();
+    $items['teachers']=array(
+                'title' => 'Список преподавателей',
+   				'description' => 'Список преподавателей',
+                'page callback'=>'teachers_page',
+                'access arguments' => array('view teacher module'),
+       			'type' => MENU_CALLBACK,
+                );
+    $items['teachers/add']=array(
+                'title' => 'Новый преподаватель',
+                'description' => 'Добавление нового преподавателя',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('teachers_add_form'), 
+                'access arguments' => array('administer teacher module'),
+                'type' => MENU_CALLBACK,
+                );
+    $items['teachers/del']=array(
+                'title' => 'Удаление',
+                'page callback'=>'teachers_del',
+                'access arguments' => array('administer teacher module'),
+                'type' => MENU_CALLBACK,
+                );
+    $items['teachers/stafflist']=array(
+                'title' => 'Штатное расписание',
+   				'description' => 'Загрузка штатного расписания',
+                'page callback'=>'teachers_stafflist_page',
+                'access arguments' => array('administer teacher module'),
+       			'type' => MENU_CALLBACK,
+                );
+    $items['teachers/view']=array(
+                'title' => 'Информация о преподавателе',
+                'description' => 'Информация о преподавателе',
+                'page callback'=>'teachers_view_page',
+                'access arguments' => array('view teacher module'),
+                'type' => MENU_CALLBACK,
+                );
+    $items['teachers/contracts_end']=array(
+                'title' => 'Окончание договоров',
+                'description' => 'Окончание договоров',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('teachers_contracts_end_form'), 
+                'access arguments' => array('administer teacher module'),
+                'type' => MENU_CALLBACK,
+                );
+    $items['teachers/anniversary']=array(
+                'title' => 'Юбиляры',
+                'description' => 'Преподаватели, у которых юбилей',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('teachers_anniversary_form'), 
+                'access arguments' => array('view teacher module'),
+                'type' => MENU_CALLBACK,
+                );
+
+  return $items;
+}
+
+function teachers_permission() 
+{ 
+   return array(
+    'administer teacher module' => array(
+      'title' => t('Administer teacher module'),
+    ),
+    'view teacher module' => array(
+      'title' => t("View some teacher module's pages"),
+    ),
+  );
+}
+
+include 'teachers_list.php';
+include 'teachers_stafflist.php';
+include 'teachers_view.php';
+include 'teachers_add.php';
+include 'teachers_contracts_end.php';
+include 'teachers_anniversary.php';
+include 'teachers_del.php';
+
+
+

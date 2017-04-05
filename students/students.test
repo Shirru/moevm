@@ -1,0 +1,52 @@
+
+
+<?php
+class SimpletestExampleTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Simpletest Example',
+      'description' => 'Ensure that the simpletest_example content type provided functions properly.',
+      'group' => 'Examples',
+    );
+  }
+
+  public function setUp() {
+ 
+    // Включаем модуль Simpletest Example
+    parent::setUp('students');
+ 
+    // Создаём пользователя с правами на создание/редактирование нод
+    $account = $this->drupalCreateUser(array('administer student module'));
+	$this->drupalLogin($account);
+	global $user;
+	$user = user_load($account->uid);
+
+  }
+ 
+ /* public function testGroupsMoevmAddGroup() { 
+    $edit = array();
+    $edit['number'] = $this->randomName(4);
+    $rpath = realpath('sites/all/default/documents/20160611224602.xlsx');
+    debug($rpath);
+	$edit['file'] = $rpath;
+    $this->drupalPost('groups/moevm/add_group', $edit, t('save'));
+  }*/
+
+  public function testGroupsMoevmAddStudent() { 
+  	$this->drupalGet('groups/moevm/add_student', array(
+			'query' => array('id'=> 7,)));
+
+    $edit = array();
+    $edit['credit_book'] = 4532;
+    $edit['surname'] = $this->randomName(20);
+    $edit['first_name'] = $this->randomName(20);
+    $edit['patronymic'] = $this->randomName(20);
+    $edit['email'] = $this->randomName(20);
+  
+    $this->drupalPost('groups/moevm/add_student', $edit, t('submit'));
+  }
+
+}
+?>

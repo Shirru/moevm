@@ -1,0 +1,42 @@
+<?php
+class SimpletestExampleTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Teachers Test',
+      'description' => 'Testing teachers module',
+      'group' => 'MyTests',
+    );
+  }
+
+  public function setUp() {
+ 
+    // Включаем модуль Teachers
+    parent::setUp('teachers');
+ 
+    // Создаём пользователя с правами на создание/редактирование 
+    $account = $this->drupalCreateUser(array('administer teacher module'));
+  	$this->drupalLogin($account);
+  	global $user;
+  	$user = user_load($account->uid);
+
+  }
+
+  public function testTeachersAdd() { 
+
+    $edit = array();
+    $edit['surname'] = $this->randomName(20);
+    $edit['first_name'] = $this->randomName(20);
+    $edit['patronymic'] = $this->randomName(20);
+    $edit['email'] = $this->randomName(20);
+    $edit['position'] = $this->randomName(20);
+    $edit['degree'] = 0.25;
+    $edit['rank'] = $this->randomName(5);
+  
+    $this->drupalPost('teachers/add', $edit, t('submit'));
+  }
+
+}
+
+?>

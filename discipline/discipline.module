@@ -1,0 +1,103 @@
+<?php
+
+// $Id$
+/**
+ * @file
+ * Модуль для управления дисциплинами
+ */
+
+/**
+ * Задание адреса
+ */
+function discipline_menu()
+{
+    $items = array ();
+
+    $items['disciplines/del']=array(
+                'title' => 'Удаление',
+                'page callback'=>'disciplines_del',
+                'access arguments' => array('administer discipline module'),
+                'type' => MENU_CALLBACK,
+                );
+
+   $items ['disciplines/plan'] = array ('title' => 'Учебные планы', 
+  							'description' => 'Учебные планы', 
+  							'page callback' => 'discipline_plan_page', 
+  							'access arguments' => array ('access content' ), 
+  							'type' => MENU_CALLBACK );
+
+    $items ['disciplines/plan/view'] = array ('title' => 'Учебный план', 
+  							'description' => 'Учебный план и дисциплины учебного плана', 
+  							'page callback' => 'discipline_plan_view_page', 
+  							'access arguments' => array ('access content' ), 
+  							'type' => MENU_CALLBACK );
+
+    $items ['disciplines/plan/discipline'] = array ('title' => 'Дисциплина УП', 
+                'description' => 'Дисциплина УП', 
+                'page callback' => 'drupal_get_form',
+                'page arguments' => array('disciplines_plan_view_discipline_form'),
+                'access arguments' => array ('access content' ), 
+                'type' => MENU_CALLBACK );
+
+    $items ['disciplines/plan/add_discipline'] = array ('title' => 'Новая дисциплина УП', 
+                'description' => 'Новая дисциплина УП', 
+                'page callback' => 'drupal_get_form',
+                'page arguments' => array('disciplines_plan_add_discipline_form'),
+                'access arguments' => array ('administer discipline module' ), 
+                'type' => MENU_CALLBACK );
+
+   $items ['disciplines/plan/add'] = array ('title' => 'Новый учебный план', 
+  							'description' => 'Добавление нового учебного плана', 
+  							'page callback' => 'discipline_plan_add_page', 
+  							'access arguments' => array ('administer discipline module' ), 
+  							'type' => MENU_CALLBACK );           
+
+    $items ['disciplines/plan/load_disciplines'] = array ('title' => 'Загрузка дисциплин из файла', 
+                'description' => 'Загрузка дисциплин из файла', 
+                'page callback' => 'drupal_get_form',
+                'page arguments' => array('disciplines_plan_load_multistep_form'), 
+                'access arguments' => array ('administer discipline module' ), 
+                'type' => MENU_CALLBACK );  
+
+    $items ['disciplines/moevm'] = array ('title' => 'Дисциплины, читаемые кафедрой', 
+  							'description' => 'Дисциплины, читаемые кафедрой', 
+  							'page callback' => 'discipline_moevm_page', 
+  							'access arguments' => array ('access content' ), 
+  							'type' => MENU_CALLBACK );
+
+   $items ['disciplines/moevm/view'] = array ('title' => 'Дисциплина кафедры', 
+  							'description' => 'Дисциплина кафедры МОЭВМ', 
+  							'page callback' => 'discipline_moevm_view_page', 
+  							'access arguments' => array ('access content' ), 
+  							'type' => MENU_CALLBACK );
+
+   $items ['disciplines/moevm/add'] = array ('title' => 'Новая дисциплина', 
+  							'description' => 'Новая дисциплина', 
+  							'page callback' => 'discipline_moevm_add_page', 
+  							'access arguments' => array ('administer discipline module' ), 
+  							'type' => MENU_CALLBACK );
+
+  return $items;
+}
+
+function discipline_permission() 
+{ 
+   return array(
+    'administer discipline module' => array(
+      'title' => t('Administer discipline module'),
+    ),
+  );
+}
+
+
+include 'plan.php';
+include 'mo.php';
+include 'mo_add.php';
+include 'mo_view.php';
+include 'discipline_del.php';
+include 'plan_view_discipline.php';
+include 'plan_add_discipline.php';
+
+
+
+

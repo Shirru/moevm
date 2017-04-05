@@ -1,0 +1,120 @@
+<?php
+
+// $Id$
+/**
+ * @file
+ * Модуль для управления группами и студентами
+ */
+
+/**
+ * Модуль для работы с преподавателями
+ */
+function students_menu()
+{
+    $items = array();
+    $items['groups/moevm']=array(
+                'title' => 'Группы МО ЭВМ',
+   				      'description' => 'Группы МО ЭВМ',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_moevm_form'), 
+                'access arguments' => array('access content'),
+       			    'type' => MENU_CALLBACK,
+                );
+
+    $items['groups/moevm/add_group']=array(
+                'title' => 'Новая группа',
+   				      'description' => 'Добавить группу МО ЭВМ',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_moevm_add_group_form'), 
+                'access arguments' => array('administer student module'),
+       			    'type' => MENU_CALLBACK,
+                );
+
+    $items['groups/moevm/view']=array(
+                'title' => 'Информация о группе',
+   				      'description' => 'Информация о группе МО ЭВМ',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_moevm_view_form'), 
+                'access arguments' => array('access content'),
+       			    'type' => MENU_CALLBACK,
+                );
+    $items['groups/moevm/add_student']=array(
+                'title' => 'Новый студент',
+                'description' => 'Добавить студента в группу МО ЭВМ',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_moevm_add_student_form'), 
+                'access arguments' => array('administer student module'),
+                'type' => MENU_CALLBACK,
+                );  
+
+    $items['groups/moevm/student']=array(
+                'title' => 'Информация о студенте',
+                'description' => 'Информация о студенте группы МО ЭВМ',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_moevm_view_student_form'), 
+                'access arguments' => array('access content'),
+                'type' => MENU_CALLBACK,
+                );  
+
+    $items['groups/other']=array(
+                'title' => 'Группы других кафедр',
+                'description' => 'Группы других кафедр',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_other_form'), 
+                'access arguments' => array('access content'),
+                    'type' => MENU_CALLBACK,
+                ); 
+
+    $items['groups/other/add']=array(
+                'title' => 'Новая группа',
+                'description' => 'Новая группа',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_other_add_form'), 
+                'access arguments' => array('administer student module'),
+                    'type' => MENU_CALLBACK,
+                ); 
+    
+    $items['groups/other/view']=array(
+                'title' => 'Информация о группе',
+                'description' => 'Информация о группе',
+                'page callback'=>'drupal_get_form',
+                'page arguments' => array('groups_other_view_form'), 
+                'access arguments' => array('access content'),
+                    'type' => MENU_CALLBACK,
+                ); 
+    
+    $items['groups/graduates']=array(
+                'title' => 'Выпускники текущего учебного года',
+                'description' => 'Выпускники текущего учебного года',
+                'page callback'=>'groups_graduates_page',
+                'access arguments' => array('access content'),
+                    'type' => MENU_CALLBACK,
+                ); 
+
+    $items['groups/del']=array(
+                'title' => 'Удаление',
+                'page callback'=>'groups_del',
+                'access arguments' => array('administer student module'),
+                'type' => MENU_CALLBACK,
+                );       
+
+    return $items;
+}
+
+function students_permission() 
+{ 
+   return array(
+    'administer student module' => array(
+      'title' => t('Administer student module'),
+    ),
+  );
+}
+
+include 'groups_moevm.php';
+include 'groups_moevm_view.php';
+include 'groups_moevm_add_student.php';
+include 'groups_moevm_view_student.php';
+include 'groups_other.php';
+include 'groups_other_view.php';
+include 'groups_graduates.php';
+include 'groups_del.php';
