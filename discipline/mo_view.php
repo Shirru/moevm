@@ -13,84 +13,6 @@ function discipline_moevm_view_page_form($form, &$form_state)
     $is_student = array_search('student', $user->roles);
     $is_educational = array_search('educational and methodical', $user->roles);
 
-    $server = 'localhost';
-    $username = 'moevm_user';
-    $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb';
-    $teachers = array();
-    $rows = array();
-    $table = '';
-    $teachers = array();
-    array_push($teachers, "Выбрать преподавателя");
-
-    $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
-    mysqli_query ($mysqli, "SET NAMES `utf8`");
-
-    $discipline_result = $mysqli->query("SELECT `idDiscipline`, `DisFullName`, `DisShortName` 
-								 FROM discipline
-								 WHERE `idDiscipline` = " . $discipline_id . "");
-
-    $canteach_result = $mysqli->query("SELECT `idTeacher`, `surname`, `firstname`, `patronymic`
-							from `teacher` 
-							WHERE `idTeacher` IN 
-							(SELECT `teacher` from `canteach` WHERE `Discipline` = " . $discipline_id . ")");
-
-    $teachers_result = $mysqli->query("SELECT `Surname`, `FirstName`, `Patronymic`, `Initials`
-								 FROM teacher");
-
-    $mysqli->close();
-
-    if(($is_teacher || $is_student) && !$is_educational)
-        $header = array('', 'Фамилия', 'Имя', 'Отчество');
-    else
-        $header = array('', 'Фамилия', 'Имя', 'Отчество', '');
-
-    foreach($canteach_result as $row)
-    {
-        if(($is_teacher || $is_student) && !$is_educational)
-        {
-            $rows[] = array("<a href='/teachers/view?id=".$row ["idTeacher"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
-                $row["surname"], $row["firstname"], $row["patronymic"]);
-        }
-        else
-        {
-            $rows[] = array("<a href='/teachers/view?id=".$row ["idTeacher"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
-                $row["surname"], $row["firstname"], $row["patronymic"],
-                "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить запись `могут вести`?\")){parent.location = \"/disciplines/del?can_teach_teacher_id=" . $row ["idTeacher"] . "&dis_id=" . $discipline_id . "\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>");
-        }
-    }
-
-    if($canteach_result)
-    {
-        $canteach_result->close();
-        $table .= theme('table', array('header' => $header, 'rows' => $rows));
-    }
-
-
-    $full_name = "";
-    $short_name = "";
-
-    foreach($discipline_result as $row)
-    {
-        $full_name .= $row["DisFullName"];
-        $short_name .= $row["DisShortName"];
-    }
-
-    if($discipline_result)
-        $discipline_result->close();
-
-    foreach($teachers_result as $row)
-    {
-        $str = "";
-        if($row["FirstName"] == "" && $row["Patronymic"] == "" && $row["Initials"] != "")
-            $str .= $row["Surname"] . " " . $row["Initials"];
-        else
-            $str .= $row["Surname"] . " " . $row["FirstName"] . " " . $row["Patronymic"];
-        array_push($teachers, $str);
-    }
-
-    $teachers_result->close();
-
     if(($is_teacher || $is_student) && !$is_educational)
     {
         $readonly = 'readonly';
@@ -100,11 +22,13 @@ function discipline_moevm_view_page_form($form, &$form_state)
         $readonly = '';
     }
 
+    $data = discipline_moevm_view_page_get_data($discipline_id);
+
     $form = array();
     $form['full_name_dis'] = array(
         '#type' => 'textfield',
         '#title' => t('Полное название дисциплины'),
-        '#default_value' => $full_name,
+        '#default_value' => $data[2][0],
         '#attributes' => array(
             $readonly => array($readonly),),
         '#size' => 50,
@@ -113,7 +37,7 @@ function discipline_moevm_view_page_form($form, &$form_state)
     $form['short_name_dis'] = array(
         '#type' => 'textfield',
         '#title' => t('Краткое название дисциплины'),
-        '#default_value' => $short_name,
+        '#default_value' => $data[2][1],
         '#attributes' => array(
             $readonly => array($readonly),),
         '#size' => 50,
@@ -122,9 +46,14 @@ function discipline_moevm_view_page_form($form, &$form_state)
 //	$table = "<h3>Могут вести</h3>" + $table;
 //	debug($table);
 
+    $form['work_programs'] = array(
+        '#prefix' => "<br><h3>Рабочие программы дисциплины</h3>",
+        '#markup' => discipline_moevm_view_page_get_work_programs($discipline_id),
+    );
+
     $form['can_teach_text'] = array(
         '#prefix' => "<br><h3>Могут вести</h3>",
-        '#markup' => $table,
+        '#markup' => $data[0],
     );
 
     if(!(($is_teacher || $is_student) && !$is_educational))
@@ -159,7 +88,7 @@ function discipline_moevm_view_page_form($form, &$form_state)
         {
             $form['can_teach_block']['teachers_select' . $i] = array(
                 '#type' => 'select',
-                '#options' => $teachers,
+                '#options' => $data[1],
                 '#default_value' => 0,
                 '#ajax' => array(
                     // Функция, которая сработает при выборе значения в списке,
@@ -257,3 +186,137 @@ function discipline_moevm_view_page_form_submit($form, &$form_state) {
     //	drupal_goto("/moevm/edit");
 }
 
+function discipline_moevm_view_page_get_data($discipline_id) {
+    $server = 'localhost';
+    $username = 'moevm_user';
+    $password = 'Pwt258E6JT8QAz3y';
+    $database = 'moevmdb';
+
+    global $user;
+    $is_teacher = array_search('teacher', $user->roles);
+    $is_student = array_search('student', $user->roles);
+    $is_educational = array_search('educational and methodical', $user->roles);
+
+    $teachers = array();
+    $rows = array();
+    $table = '';
+    $teachers = array();
+    $answer = array();
+
+    array_push($teachers, "Выбрать преподавателя");
+
+    $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
+    mysqli_query ($mysqli, "SET NAMES `utf8`");
+
+    $discipline_result = $mysqli->query("SELECT `idDiscipline`, `DisFullName`, `DisShortName` 
+								 FROM discipline
+								 WHERE `idDiscipline` = " . $discipline_id . "");
+
+    $canteach_result = $mysqli->query("SELECT `idTeacher`, `surname`, `firstname`, `patronymic`
+							from `teacher` 
+							WHERE `idTeacher` IN 
+							(SELECT `teacher` from `canteach` WHERE `Discipline` = " . $discipline_id . ")");
+
+    $teachers_result = $mysqli->query("SELECT `Surname`, `FirstName`, `Patronymic`, `Initials`
+								 FROM teacher ORDER BY `Surname`, `FirstName`, `Patronymic`, `Initials`");
+
+    $mysqli->close();
+
+    if(($is_teacher || $is_student) && !$is_educational)
+        $header = array('', 'Фамилия', 'Имя', 'Отчество');
+    else
+        $header = array('', 'Фамилия', 'Имя', 'Отчество', '');
+
+    foreach($canteach_result as $row)
+    {
+        if(($is_teacher || $is_student) && !$is_educational)
+        {
+            $rows[] = array("<a href='/teachers/view?id=".$row ["idTeacher"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+                $row["surname"], $row["firstname"], $row["patronymic"]);
+        }
+        else
+        {
+            $rows[] = array("<a href='/teachers/view?id=".$row ["idTeacher"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+                $row["surname"], $row["firstname"], $row["patronymic"],
+                "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить запись `могут вести`?\")){parent.location = \"/disciplines/del?can_teach_teacher_id=" . $row ["idTeacher"] . "&dis_id=" . $discipline_id . "\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>");
+        }
+    }
+
+    if($canteach_result)
+    {
+        $canteach_result->close();
+        $table .= theme('table', array('header' => $header, 'rows' => $rows));
+    }
+
+
+    $full_name = "";
+    $short_name = "";
+
+    foreach($discipline_result as $row)
+    {
+        $full_name .= $row["DisFullName"];
+        $short_name .= $row["DisShortName"];
+    }
+
+    if($discipline_result)
+        $discipline_result->close();
+
+    foreach($teachers_result as $row)
+    {
+        $str = "";
+        if($row["FirstName"] == "" && $row["Patronymic"] == "" && $row["Initials"] != "")
+            $str .= $row["Surname"] . " " . $row["Initials"];
+        else
+            $str .= $row["Surname"] . " " . $row["FirstName"] . " " . $row["Patronymic"];
+        array_push($teachers, $str);
+    }
+
+    if($teachers_result)
+        $teachers_result->close();
+
+    array_push($answer, $table);
+    array_push($answer, $teachers);
+    array_push($answer, array($full_name, $short_name));
+
+    return $answer;
+}
+
+function discipline_moevm_view_page_get_work_programs($discipline_id) {
+    $server = 'localhost';
+    $username = 'moevm_user';
+    $password = 'Pwt258E6JT8QAz3y';
+    $database = 'moevmdb';
+
+    $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
+    mysqli_query ($mysqli, "SET NAMES `utf8`");
+
+    $work_program_result = $mysqli->query("SELECT a.FileName, cur.CurriculumNum, a.CurrentVersion
+                    FROM 
+                        (SELECT wp.FileName, wp.CurriculumDiscipline, wp.CurrentVersion, cd.Curriculum, cd.Discipline
+                         FROM workprogramversion wp
+                         LEFT OUTER JOIN curriculumdiscipline cd ON wp.CurriculumDiscipline = cd.idCurriculumDiscipline) a
+                    LEFT OUTER JOIN curriculum cur ON a.Curriculum = cur.idCurriculum
+                    WHERE a.Discipline = " . $discipline_id . " && a.CurrentVersion = 1");
+
+    $mysqli->close();
+
+    $header = array('Номер учебного плана', 'Рабочая программа');
+    $rows = array();
+
+    if($work_program_result) {
+        foreach ($work_program_result as $row) {
+            $rows[] = array($row["CurriculumNum"],
+                basename($row["FileName"]) . " <a href='"
+                . file_create_url($row["FileName"]) . "'  title='скачать'><img src='/sites/all/pic/download.png'></a>
+                <a href=http://docs.google.com/viewer?url=" . file_create_url($row["FileName"]) . "  title='просмотр'>
+                <img src='/sites/all/pic/preview.png'></a> "
+            );
+        }
+
+        $work_program_result -> close();
+    }
+
+    $table = theme('table', array('header' => $header, 'rows' => $rows));
+
+    return $table;
+}

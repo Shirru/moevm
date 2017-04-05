@@ -94,91 +94,45 @@ function teachers_view_canteach_create_table($teacher_id)
     $is_denied = ($is_teacher || $is_student) && !$is_educational;
 
     if(!$is_denied)
-		$header = array('Название', 'Номер УП', 'Рабочая программа', '');
+		$header = array('Полное название', 'Краткое название', '');
 	else
-		$header = array('Название', 'Номер УП', 'Рабочая программа');
+		$header = array('Полное название', 'Краткое название',);
 	$table_rows = array();
 
 	$mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
 	mysqli_query ($mysqli, "SET NAMES `utf8`");
 
-	// Дисциплины УП, которые может вести преподаватель
-	$cur_dis_result = $mysqli->query("SELECT `idCurriculumDiscipline`, `Curriculum`, `Discipline` 
-		FROM curriculumdiscipline 
-		WHERE `Discipline` IN
+	// Дисциплины, которые может вести преподаватель
+	$dis_result = $mysqli->query("SELECT `DisFullName`, `DisShortName`, `idDiscipline`
+		FROM discipline 
+		WHERE `idDiscipline` IN
 		(SELECT `Discipline` FROM canteach
 		WHERE `Teacher` = '" . $teacher_id . "') ");
 
-	// Данные для таблицы "Может вести"
-	$rows = array();
-	$i = 0;
-	foreach ($cur_dis_result as $row) 
-	{
-		$discipline_result = $mysqli->query("SELECT `DisFullName`
-							FROM discipline 
-							WHERE `idDiscipline` = '" . $row['Discipline'] . "' ");
+    $mysqli->close();
 
-		foreach ($discipline_result as $d) 
-		{
-			$rows[$i][] = $d['DisFullName'];
-		}
-		$discipline_result->close();
+    if($dis_result) {
+        foreach ($dis_result as $row) {
+            if($is_denied) {
+                $table_rows[] = array($row['DisFullName'],
+                    $row['DisShortName'],);
+            }
+            else {
+                $table_rows[] = array($row['DisFullName'],
+                    $row['DisShortName'],
+                    "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить запись `может вести`?\"))
+                    {parent.location = \"del?can_teach_dis_id=" . $row['idDiscipline'] . "&teacher_id=" . $teacher_id
+                    . "\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>");
+            }
+        }
 
-		$curriculum_result = $mysqli->query("SELECT `CurriculumNum`
-							FROM curriculum 
-							WHERE `idCurriculum` = '" . $row['Curriculum'] . "' ");
-
-		foreach ($curriculum_result as $c) 
-		{
-			$rows[$i][] = $c['CurriculumNum'];
-		}
-		$curriculum_result->close();
-
-		if(empty($rows[$i][1]))
-			$rows[$i][1] = '';
-
-		$work_program_result = 	$mysqli->query("SELECT `FileName`
-							FROM `workprogramversion` 
-							WHERE (`CurriculumDiscipline` = '" . $row['idCurriculumDiscipline'] . "'
-							AND `CurrentVersion` = 1) ");
-
-		foreach ($work_program_result as $wp) 
-		{
-			$rows[$i][] = $wp['FileName'];
-		}
-
-		if(empty($rows[$i][2]))
-			$rows[$i][2] = '';
-
-		$rows[$i][] = $row['Discipline'];
-
-		$work_program_result->close();
-		$i++;
-	}
-
-	$cur_dis_result->close();
-	$mysqli->close();
-
-	// Формируем строки для таблицы
-
-	$i = 0;
-	foreach($rows as $row)
-	{
-		$table_rows[$i][] = $row[0];
-		$table_rows[$i][] = $row[1];
-		if(!empty($row[2]))
-			$table_rows[$i][] = basename($row[2]) . " <a href='" . file_create_url($row[2]) . "'  title='скачать'><img src='/sites/all/pic/download.png'></a><a href=http://docs.google.com/viewer?url=" . file_create_url($row[2]) . "  title='просмотр'><img src='/sites/all/pic/preview.png'></a> ";
-		else
-			$table_rows[$i][] = '';
-		if(!$is_denied)
-			$table_rows[$i][] = "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить запись `может вести`?\")){parent.location = \"del?can_teach_dis_id=" . $row[3] . "&teacher_id=" . $teacher_id . "\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>";
-		$i++;
-	}	
+        $dis_result -> close();
+    }
 
 	// Создаем таблицу
 	$table = theme('table', array('header' => $header, 'rows' => $table_rows));
 
-	if(!empty($rows))
+	if(!empty($table_rows))
 		return $table;
 	else
 		return '';	

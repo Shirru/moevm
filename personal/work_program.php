@@ -538,9 +538,9 @@ function personal_teacher_work_program_form_submit($form, &$form_state)
 		    $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
 		    mysqli_query ($mysqli, "SET NAMES `utf8`");
 
-		    mysqli_query ($mysqli, "UPDATE workprogramversion SET
+		   /* mysqli_query ($mysqli, "UPDATE workprogramversion SET
 									 `CurrentVersion` = '0'
-									 WHERE `CurrentVersion` = '1'");
+									 WHERE `CurrentVersion` = '1'");*/
 
 			mysqli_query ($mysqli, "UPDATE workprogramversion SET
 									 `CurrentVersion` = '1'
