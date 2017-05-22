@@ -1,0 +1,75 @@
+<?php
+
+// $Id$
+/**
+ * @file
+ * Модуль для выбора года и соответствующего раздела
+ */
+
+function archive_menu()
+{
+    $items = array();
+    $items['archive']=array(
+        'title' => 'Архив',
+        'description' => 'Архив кафедры МОЭВМ',
+        'page callback'=>'drupal_get_form',
+        'page arguments' => array('archive_main_form'),
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/teachers']=array(
+        'title' => 'Список преподавателей (архивные данные)',
+        'description' => 'Архив преподавателей кафедры МОЭВМ',
+        'page callback'=>'archive_teachers_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/teachers/view']=array(
+        'title' => 'Просмотр преподавателя (архивные данные)',
+        'description' => 'Преподаватель кафедры МОЭВМ',
+        'page callback'=>'archive_teachers_view_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/disciplines']=array(
+        'title' => 'Дисциплины кафедры МОЭВМ (архивные данные)',
+        'description' => 'Архив дисциплин кафедры МОЭВМ',
+        'page callback'=>'archive_disciplines_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/disciplines/view']=array(
+        'title' => 'Просмотр дисциплины (архивные данные)',
+        'description' => 'Дисциплина кафедры МОЭВМ',
+        'page callback'=>'archive_disciplines_view_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function archive_permission()
+{
+    return array(
+        'administer archive module' => array(
+            'title' => t('Administer archive module'),
+        ),
+        'view archive module' => array(
+            'title' => t("View some archive module's pages"),
+        ),
+    );
+}
+
+include 'archive.php';
+include 'archive_teachers.php';
+include 'archive_teachers_view.php';
+include 'archive_disciplines.php';
+include 'archive_disciplines_view.php';
+
+
+

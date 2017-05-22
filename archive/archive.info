@@ -1,0 +1,4 @@
+name = "Archive"
+description = "Allow to select the year and the relevant section"
+version = 7.x-1.x-dev
+core = 7.x
