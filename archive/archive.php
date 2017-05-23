@@ -59,19 +59,25 @@ function get_available_years() {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb';
+
+    $years = array();
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
     mysqli_query ($mysqli, "SET NAMES `utf8`");
 
-    $years_result = mysqli_query ($mysqli, "SELECT Year FROM teacher GROUP BY Year ");
+    $db_result = mysqli_query($mysqli, "SHOW DATABASES ");
 
-    foreach($years_result as $row) {
-        $years[] = $row['Year'];
+    $mysqli->close();
+
+    if($db_result) {
+        foreach ($db_result as $row) {
+            if (strpos($row['Database'], 'moevmdb_archive_') !== false) {
+                $years[] = substr($row['Database'], -4);
+            }
+        }
+        $db_result->close();
     }
-
-    //$years = $years_result;
-    $years_result->close();
 
     return $years;
 }

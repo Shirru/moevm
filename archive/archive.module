@@ -50,6 +50,78 @@ function archive_menu()
         'type' => MENU_CALLBACK,
     );
 
+    $items['archive/curriculums']=array(
+        'title' => 'Учебные планы (архивные данные)',
+        'description' => 'Учебные планы кафедры МОЭВМ',
+        'page callback'=>'archive_curriculums_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/curriculums/view']=array(
+        'title' => 'Просмотр учебного плана (архивные данные)',
+        'description' => 'Учебный план кафедры МОЭВМ',
+        'page callback'=>'archive_curriculums_view_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/curriculums/discipline']=array(
+        'title' => 'Просмотр дисциплины УП (архивные данные)',
+        'description' => 'Дисциплина УП кафедры МОЭВМ',
+        'page callback'=>'archive_curriculums_view_discipline_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups']=array(
+        'title' => 'Просмотр информации о группах (архивные данные)',
+        'description' => 'Просмотр информации о группах',
+        'page callback'=>'archive_groups_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups/moevm']=array(
+        'title' => 'Группы МОЭВМ (архивные данные)',
+        'description' => 'Группы кафедры МОЭВМ',
+        'page callback'=>'archive_groups_moevm_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups/moevm/view']=array(
+        'title' => 'Просмотр группы МОЭВМ (архивные данные)',
+        'description' => 'Группа кафедры МОЭВМ',
+        'page callback'=>'archive_groups_moevm_view_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups/moevm/student']=array(
+        'title' => 'Студент группы МОЭВМ (архивные данные)',
+        'description' => 'Информация о студенте',
+        'page callback'=>'archive_groups_moevm_student_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups/other']=array(
+        'title' => 'Группы других кафедр (архивные данные)',
+        'description' => 'Группы других кафедр',
+        'page callback'=>'archive_groups_other_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['archive/groups/other/view']=array(
+        'title' => 'Просмотр группы (архивные данные)',
+        'description' => 'Информация о группе',
+        'page callback'=>'archive_groups_other_view_page',
+        'access arguments' => array('administer archive module'),
+        'type' => MENU_CALLBACK,
+    );
+
     return $items;
 }
 
@@ -70,6 +142,15 @@ include 'archive_teachers.php';
 include 'archive_teachers_view.php';
 include 'archive_disciplines.php';
 include 'archive_disciplines_view.php';
+include 'archive_curriculums.php';
+include 'archive_curriculums_view.php';
+include 'archive_curriculums_view_discipline.php';
+include 'archive_groups.php';
+include 'archive_groups_moevm.php';
+include 'archive_groups_moevm_view.php';
+include 'archive_groups_moevm_student.php';
+include 'archive_groups_other.php';
+include 'archive_groups_other_view.php';
 
 
 
