@@ -37,7 +37,7 @@ function archive_groups_moevm_view_page() {
 
     for ($i = 0; $i < sizeof($students); $i++) {
         $rows[] = array("<a href='student?id=" . $students[$i]["idStudent"] .
-            "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $i+1, $students[$i]['RecordBookNum'],
             $students[$i]['Surname'], $students[$i]['FirstName'], $students[$i]['Patronymic']);
     }

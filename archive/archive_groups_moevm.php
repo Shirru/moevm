@@ -220,7 +220,7 @@ function archive_groups_moevm_get_table($rows, $year)
     {
 
         $table_rows[] = array(
-            "<a href='moevm/view?id=" . $row["id"] . "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            "<a href='moevm/view?id=" . $row["id"] . "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $row['group_num'],
             $row['size'],
             $row['head'],

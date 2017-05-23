@@ -32,7 +32,7 @@ function get_archive_discipline_data($discipline_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
@@ -40,14 +40,13 @@ function get_archive_discipline_data($discipline_id, $year) {
 
     $discipline_result = $mysqli->query("SELECT *
 							FROM `discipline` 
-							WHERE `idDiscipline` = '" . $discipline_id . "' AND `Year` = " . $year);
+							WHERE `idDiscipline` = '" . $discipline_id . "'");
 
     $work_program_result = $mysqli->query("SELECT a.FileName, cur.CurriculumNum, a.CurrentVersion
                     FROM 
                         (SELECT wp.FileName, wp.CurriculumDiscipline, wp.CurrentVersion, cd.Curriculum, cd.Discipline
                          FROM workprogramversion wp
-                         LEFT OUTER JOIN curriculumdiscipline cd ON wp.CurriculumDiscipline = cd.idCurriculumDiscipline
-                         WHERE wp.Year = " . $year . ") a
+                         LEFT OUTER JOIN curriculumdiscipline cd ON wp.CurriculumDiscipline = cd.idCurriculumDiscipline) a
                     LEFT OUTER JOIN curriculum cur ON a.Curriculum = cur.idCurriculum
                     WHERE a.Discipline = " . $discipline_id . " && a.CurrentVersion = 1");
 
@@ -93,7 +92,7 @@ function get_archive_canteach_data($discipline_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
@@ -102,15 +101,14 @@ function get_archive_canteach_data($discipline_id, $year) {
     $canteach_result = $mysqli->query("SELECT `idTeacher`, `surname`, `firstname`, `patronymic`
 							from `teacher` 
 							WHERE `idTeacher` IN 
-							(SELECT `teacher` from `canteach` WHERE `Discipline` = " . $discipline_id
-                            . " AND `Year` = " . $year . ")");
+							(SELECT `teacher` from `canteach` WHERE `Discipline` = " . $discipline_id . ")");
     $mysqli->close();
 
     if($canteach_result)
     {
         foreach($canteach_result as $row) {
             $rows[] = array("<a href='/archive/teachers/view?id=".$row ["idTeacher"]."&year=" . $year . "'  title='просмотр'>
-            <img src='/sites/all/pic/edit.png'></a>",
+            <img src='/sites/all/pic/view.png'></a>",
                 $row["surname"], $row["firstname"], $row["patronymic"]);
         }
         $canteach_result->close();

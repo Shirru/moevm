@@ -7,12 +7,12 @@
  */
 
 function archive_teachers_page(){
+    $year = $_GET['year'];
+
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
-
-    $year = $_GET['year'];
+    $database = 'moevmdb_archive_' . $year;
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
     mysqli_query ($mysqli, "SET NAMES `utf8`");
@@ -22,7 +22,7 @@ function archive_teachers_page(){
     $output = "<h2>Данные за " . $year . " год</h2>";
 
     $teachers_result = $mysqli->query("SELECT *
-                 FROM teacher  WHERE `Year` = " . $year . " ORDER BY `Surname`, `FirstName`, `Patronymic`");
+                 FROM teacher ORDER BY `Surname`, `FirstName`, `Patronymic`");
 
     $mysqli->close();
 
@@ -30,7 +30,7 @@ function archive_teachers_page(){
     {
 
         $rows[] = array("<a href='teachers/view?id=" . $row ["idTeacher"] . "&year=" . $year . "'  title='просмотр'>
-                <img src='/sites/all/pic/edit.png'></a>",
+                <img src='/sites/all/pic/view.png'></a>",
             $row["Surname"], $row["FirstName"], $row["Patronymic"],
             $row["Position"], $row["Degree"], $row["Rank"],
             $row["Condition"],

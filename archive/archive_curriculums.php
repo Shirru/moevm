@@ -58,7 +58,7 @@ function get_archive_bachelor_curriculums($year) {
         $chair_result->close();
 
         $rows[] = array("<a href='/archive/curriculums/view?id=".$row ["idCurriculum"].
-            "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            "&year=" . $year . "'  title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,);
     }
 
@@ -112,7 +112,7 @@ function get_archive_master_curriculums($year) {
 
 
         $rows_master[] = array("<a href='/archive/curriculums/view?id=".$row ["idCurriculum"]."&year=" . $year . "'
-          title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+          title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,);
     }
 

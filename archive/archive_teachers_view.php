@@ -31,7 +31,7 @@ function get_personal_teacher_data($teacher_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
@@ -39,7 +39,7 @@ function get_personal_teacher_data($teacher_id, $year) {
 
     $teacher_result = $mysqli->query("SELECT *
 							FROM `teacher` 
-							WHERE `idTeacher` = '" . $teacher_id . "' AND `Year` = " . $year);
+							WHERE `idTeacher` = '" . $teacher_id . "'");
 
     $ind_plan_result = $mysqli->query("SELECT *
                  FROM individualplan
@@ -124,7 +124,7 @@ function get_canteach_teacher_data($teacher_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
     mysqli_query ($mysqli, "SET NAMES `utf8`");
@@ -134,7 +134,7 @@ function get_canteach_teacher_data($teacher_id, $year) {
 		FROM discipline 
 		WHERE `idDiscipline` IN
 		(SELECT `Discipline` FROM canteach
-		WHERE `Teacher` = " . $teacher_id . " AND `Year` = " . $year . ")");
+		WHERE `Teacher` = '" . $teacher_id . "')");
 
     $mysqli->close();
 
@@ -162,23 +162,23 @@ function get_hallload_teacher_data($teacher_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
     mysqli_query ($mysqli, "SET NAMES `utf8`");
 
     $hall_load_result = mysqli_query ($mysqli, "SELECT * FROM `hallload`
-		WHERE `Teacher` = '" . $teacher_id . "' AND `Year` = " . $year);
+		WHERE `Teacher` = '" . $teacher_id . "'");
 
     foreach ($hall_load_result as $row) {
         $discipline_result = mysqli_query($mysqli, "SELECT `DisFullName` FROM `discipline`
-		WHERE `idDiscipline` = '" . $row['Discipline'] . "' AND `Year` = " . $year);
+		WHERE `idDiscipline` = '" . $row['Discipline'] . "'");
 
         $discipline = $discipline_result->fetch_assoc();
         $discipline_result->close();
 
         $group_result = mysqli_query($mysqli, "SELECT `GroupNum` FROM `group`
-		WHERE `idGroup` = '" . $row['Group'] . "'AND `Year` = " . $year);
+		WHERE `idGroup` = '" . $row['Group'] . "'");
 
         $group = $group_result->fetch_assoc();
         $group_result->close();
@@ -214,17 +214,17 @@ function get_extraload_teacher_data($teacher_id, $year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
     $mysqli = new \MySQLi($server, $username, $password, $database) or die(mysqli_error());
     mysqli_query ($mysqli, "SET NAMES `utf8`");
 
     $extra_load_result = mysqli_query ($mysqli, "SELECT * FROM `extraload`
-		WHERE `Teacher` = '" . $teacher_id . "' AND `Year` = " . $year);
+		WHERE `Teacher` = '" . $teacher_id . "'");
 
     foreach ($extra_load_result as $row) {
         $extra_load_kind_result = mysqli_query($mysqli, "SELECT `Name`, `Standart` FROM `extraloadkind`
-		WHERE `idExtraLoadKind` = '" . $row['ExtraLoadKind'] . "' AND `Year` = " . $year);
+		WHERE `idExtraLoadKind` = '" . $row['ExtraLoadKind'] . "'");
 
         $extra_load_kind = $extra_load_kind_result->fetch_assoc();
         $extra_load_kind_result->close();

@@ -63,12 +63,12 @@ function discipline_plan_page()
 
         if($is_denied)
         {
-            $rows[] = array("<a href='plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            $rows[] = array("<a href='/disciplines/plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,);
         }
         else
         {
-            $rows[] = array("<a href='plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            $rows[] = array("<a href='/disciplines/plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,
             "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить УП?\")){parent.location = \"/disciplines/del?cur_id=" . $row ["idCurriculum"] . "&curriculum=true\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>");
         }
@@ -117,12 +117,12 @@ function discipline_plan_page()
 
         if($is_denied)
         {
-            $rows_master[] = array("<a href='plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            $rows_master[] = array("<a href='/disciplines/plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,);
         }
         else
         {
-            $rows_master[] = array("<a href='plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            $rows_master[] = array("<a href='/disciplines/plan/view?id=".$row ["idCurriculum"]."'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
             $row["CurriculumNum"], $direction_code, $direction_name, $chair_id,
             "<a href='#' onclick='if(confirm(\"Вы действительно хотите удалить УП?\")){parent.location = \"/disciplines/del?cur_id=" . $row ["idCurriculum"] . "&curriculum=true\";}else return false;'  title='удалить'><img src='/sites/all/pic/delete.png'></a>");
         }
@@ -726,7 +726,7 @@ function discipline_plan_load_disciplines_save($curriculum_id, $table)
     mysqli_query ($mysqli, "SET NAMES `utf8`");
 
     mysqli_query ($mysqli, "DELETE FROM `curriculumdiscipline` 
-        WHERE `idCurriculum` = '" . $curriculum_id . "'");
+        WHERE `Curriculum` = '" . $curriculum_id . "'");
 
     for($i = 0; $i < count($table); $i++) 
     {

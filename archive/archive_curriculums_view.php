@@ -63,7 +63,7 @@ function get_archive_curriculum_data($year, $curriculum_id) {
         $discipline_result->close();
 
         $rows[] = array("<a href='discipline?id=".$row ["idCurriculumDiscipline"]."&year=" . $year . "' 
-         title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+         title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $row["DisIndex"], $discipline_name[0], $row["Exam"],
             $row["CreditW/OGrade"], $row["CreditWithGrade"],
             $row["Lecture"], $row["Lab"], $row["Practice"],

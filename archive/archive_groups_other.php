@@ -127,7 +127,7 @@ function get_archive_other_groups_tables($groups, $year)
         {
             $rows[] = array(
                 "<a href='other/view?id=" . $groups[$i][$j]['idGroup'] . "&year=" . $year .
-                "'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+                "'  title='просмотр'><img src='/sites/all/pic/view.png'></a>",
                 $groups[$i][$j]['GroupNum'],
                 $groups[$i][$j]['Size'],
                 $groups[$i][$j]['CreationYear'],

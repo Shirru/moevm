@@ -12,14 +12,20 @@ function archive_disciplines_page()
 }
 
 function archive_disciplines_form($form, &$form_state) {
-    $year = $_GET['year'];
-
     $filters = array("Все дисциплины кафедры", "Дисциплины бакалавров", "Дисциплины магистров",
         "По направлениям");
 
     $form = array();
 
     $choice = isset($form_state['values']['filter_select']) ? $form_state['values']['filter_select'] : 0;
+
+    if (isset($form_state['storage']['year'])) {
+        $year = $form_state['storage']['year'];
+    }
+    else {
+        $year = $_GET['year'];
+        $form_state['storage']['year'] = $year;
+    }
 
     if (isset($form_state['storage']['disciplines'])) {
         $disciplines = $form_state['storage']['disciplines'];
@@ -28,6 +34,8 @@ function archive_disciplines_form($form, &$form_state) {
         $disciplines = archive_disciplines_get_all_disciplines($year);
         $form_state['storage']['disciplines'] = $disciplines;
     }
+
+    //dsm($year);
 
     $form['filter_select'] = array(
         '#prefix' => "<h2>Данные за " . $year . " год</h2><br>",
@@ -63,7 +71,7 @@ function archive_disciplines_get_all_disciplines($year) {
     $server = 'localhost';
     $username = 'moevm_user';
     $password = 'Pwt258E6JT8QAz3y';
-    $database = 'moevmdb_archive';
+    $database = 'moevmdb_archive_' . $year;
 
     $disciplines = array();
 
@@ -74,8 +82,7 @@ function archive_disciplines_get_all_disciplines($year) {
 					FROM
 						(SELECT dis.*, cd.Discipline, cd.Curriculum
 						FROM discipline dis
-						LEFT OUTER JOIN curriculumdiscipline cd ON dis.idDiscipline = cd.Discipline 
-						WHERE dis.Year = " . $year . ") a
+						LEFT OUTER JOIN curriculumdiscipline cd ON dis.idDiscipline = cd.Discipline) a
 					LEFT OUTER JOIN curriculum cur ON a.Curriculum = cur.idCurriculum
 					LEFT OUTER JOIN direction dir ON cur.Direction = dir.idDirection
 					WHERE a.Chair = (SELECT idChair FROM chair WHERE ChairNum = 14) ORDER BY a.DisFullName");
@@ -133,7 +140,7 @@ function archive_disciplines_get_table($type, $disciplines, $year) {
             break;
         case 3:
             //on directions
-            $table = archive_disciplines_table_direction($disciplines);
+            $table = archive_disciplines_table_direction($disciplines, $year);
             break;
     }
 
@@ -148,7 +155,7 @@ function archive_disciplines_create_table($disciplines, $year) {
 
     foreach($disciplines as $row) {
         $rows[] = array("<a href='disciplines/view?dis=".$row ["idDiscipline"]."&year=" . $year
-            . "'  title='просмотр'><img src='/sites/all/pic/edit.png'></a>",
+            . "'  title='просмотр'><img src='/sites/all/pic/view.png'></a>",
             $row["DisFullName"],
             $row["DisShortName"],
             $row["Directions"],
@@ -178,7 +185,7 @@ function archive_disciplines_table_stage($stage, $disciplines, $year) {
     return archive_disciplines_create_table($data, $year);
 }
 
-function archive_disciplines_table_direction($disciplines) {
+function archive_disciplines_table_direction($disciplines, $year) {
     foreach ($disciplines as $key => $row) {
         $direction_code[$key]  = $row['DirectionCode'];
     }
@@ -203,7 +210,7 @@ function archive_disciplines_table_direction($disciplines) {
         }
         array_multisort($dis_name, SORT_ASC, $data);
 
-        $tables .= discipline_moevm_create_table($data);
+        $tables .= archive_disciplines_create_table($data, $year);
 
         if ($i < sizeof($disciplines)) {
             $direction = $disciplines[$i]["DirectionCode"];
